@@ -9,52 +9,70 @@
         <span style="float:right; margin-top: 2px;" class="hide-mobile text-faded text-small">3 replies by 3 contributors</span>
       </p>
 
-      <div class="post-list">
+      <PostList :posts="posts"/>
 
-        <div class="post" v-for="postId in thread.posts">
-
-          <div class="user-info">
-            <a href="profile.html#profile-details" class="user-name">{{users[posts[postId].userId].name}}</a>
-
-            <a href="profile.html#profile-details">
-              <img class="avatar-large" :src="users[posts[postId].userId].avatar" alt="">
-            </a>
-
-            <p class="desktop-only text-small">107 posts</p>
-
-          </div>
-
-          <div class="post-content">
-            <div>
-              {{posts[postId].text}}
-            </div>
-          </div>
-
-          <div class="post-date text-faded">
-            {{posts[postId].publishedAt}}
-          </div>
-
+      <form @submit.prevent="addPost">
+        <div class="form-group">
+          <textarea
+            v-model="newPostText"
+            cols="30"
+            rows="10"
+            class="form-input">
+          </textarea>
         </div>
+        <div class="btn-group">
+          <button type="submit" class="btn btn-blue">Submit</button>
+        </div>
+      </form>
 
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import sourceData from '@/data'
+import PostList from '@/components/PostList'
 export default {
+  components: {
+    PostList
+  },
+
   props: {
     id: {
       required: true,
       type: String
     }
   },
+
   data () {
     return {
       thread: sourceData.threads[this.id],
-      posts: sourceData.posts,
-      users: sourceData.users
+      users: sourceData.users,
+      newPostText: ''
+    }
+  },
+
+  computed: {
+    posts () {
+      const postsId = Object.values(this.thread.posts)
+      return Object.values(sourceData.posts).filter((post) => postsId.includes(post['.key']))
+    }
+  },
+
+  methods: {
+    addPost () {
+      const postId = 'NewPostWithId' + Math.random()
+      const post = {
+        '.key': postId,
+        publishedAt: Date.now(),
+        text: this.newPostText,
+        userId: 'ALXhxjwgY9PinwNGHpfai6OWyDu2',
+        threadId: this.id
+      }
+      this.$set(sourceData.posts, postId, post)
+      this.$set(this.thread.posts, postId, postId)
+      this.$set(this.users[post.userId].posts, postId, postId)
+      this.newPostText = ''
     }
   }
 }

@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     postsCount () {
-      return Object.keys(this.thread.posts).length - 1
+      return Object.keys(this.thread.posts).length
     },
     user () {
       return sourceData.users[this.thread.userId]
