@@ -18,18 +18,25 @@
     </div>
 
     <div class="post-date text-faded">
-      {{post.publishedAt}}
+      {{post.publishedAt | formattedDateString}}
     </div>
   </div>
 </template>
 
 <script>
 import sourceData from '@/data'
+import fecha from 'fecha'
 export default {
   props: {
     post: {
       required: true,
       type: Object
+    }
+  },
+
+  filters: {
+    formattedDateString (date) {
+      return fecha.format(date, 'dddd MMMM Do, YYYY')
     }
   },
 
